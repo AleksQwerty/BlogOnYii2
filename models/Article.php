@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "article".
  *
  * @property int $id
- * @property string|null $title Заголовок статьи
+ * @property string|null $title
  * @property string|null $description Описание статьи
  * @property string|null $content Содержимое статьи
  * @property string|null $created_at Дата создания статьи
@@ -37,10 +37,11 @@ class Article extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['description', 'content'], 'string'],
-            [['created_at'], 'safe'],
-            [['viewed', 'user_id', 'status', 'category_id'], 'integer'],
-            [['title', 'image'], 'string', 'max' => 255],
+            [['title'], 'required'],
+            [['title', 'description', 'content'], 'string'],
+            [['created_at'], 'date', 'format' => 'php:Y-m-d'],
+            [['created_at'], 'default', 'value' => date('Y-m-d')],
+            [['title'], 'string', 'max' => 255]
         ];
     }
 
