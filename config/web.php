@@ -43,18 +43,20 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+
     ],
     'modules' => [
         'admin' => [
             'class' => 'app\modules\admin\Module',
+        ],
+        'glor' => [
+            'class' => 'app\modules\glor\Module',
         ],
     ],
     'params' => $params,
