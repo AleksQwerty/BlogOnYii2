@@ -4,8 +4,10 @@ namespace app\modules\admin\controllers;
 
 use app\models\Article;
 use app\models\ArticleSearch;
+use app\models\Category;
 use app\models\UploadImage;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -162,16 +164,44 @@ class ArticleController extends Controller
             $file = UploadedFile::getInstance($model, 'image');
 
             try {
-                if($article->saveImage($model->uploadFile($file, $article->image))){
+                if ($article->saveImage($model->uploadFile($file, $article->image))) {
                     return $this->redirect(['view', 'id' => $article->id]);
                 }
-            }catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 throw new BadRequestHttpException('Не удалось сохранить картинку в базу');
             }
-
         }
 
         return $this->render('image', ['model' => $model]);
     }
 
+    public function actionSetCategory($id)
+    {
+        $article = $this->findModel($id);
+
+        $selectedCurrentCategory = $article->category->id ?? null;
+
+        $categories = Category::find()->all();
+
+        $categoryList = ArrayHelper::map($categories, 'id', 'title');
+
+        if (Yii::$app->request->isPost) {
+            $category = Yii::$app->request->post('category');
+            /**
+             * теперь пробуем ее сохранить в модель статьи
+             */
+            if ($article->saveCategory($category)){
+                return $this->redirect(['view', 'id' => $article->id]);
+            }
+        }
+
+        return $this->render(
+            'category',
+            [
+                'article'                 => $article,
+                'selectedCurrentCategory' => $selectedCurrentCategory,
+                'categoryList'            => $categoryList
+            ]
+        );
+    }
 }

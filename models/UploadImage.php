@@ -26,13 +26,11 @@ class UploadImage extends Model
         $this->image = $file;
 
         if ($this->validate()) {
-            if ($this->checkFileExists($currentNameImage)) {
                 try {
                     $this->deleteFileInSystem($currentNameImage);
                 } catch (ErrorException $e) {
                     throw new Exception('не удалось удалить файл');
                 }
-            }
             return $this->saveImage();
         }
     }
@@ -49,13 +47,19 @@ class UploadImage extends Model
 
     public function checkFileExists($currentNameImage)
     {
-        return file_exists($this->getFolderForUploadFile() . $currentNameImage) && !empty($currentNameImage);
+        if (!empty($currentNameImage)){
+            return file_exists($this->getFolderForUploadFile() . $currentNameImage);
+        }else{
+            return false;
+        }
     }
 
     public function deleteFileInSystem($currentNameImage)
     {
         try {
-            unlink($this->getFolderForUploadFile() . $currentNameImage);
+            if ($this->checkFileExists($currentNameImage)) {
+                unlink($this->getFolderForUploadFile() . $currentNameImage);
+            }
         }catch (\Exception $exception){
             throw new ErrorException('не удалось удалить файл');
         }

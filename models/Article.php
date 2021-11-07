@@ -110,4 +110,18 @@ class Article extends \yii\db\ActiveRecord
     {
        return ($this->image) ? '/uploads/' . $this->image : '/dont photo.png';
     }
+
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
+    }
+
+    public function saveCategory($categoryId)
+    {
+        $categoryModel = Category::findOne($categoryId);
+        if (!empty($categoryModel)){
+            $this->link('category', $categoryModel);
+            return true;
+        }
+    }
 }
