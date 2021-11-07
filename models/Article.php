@@ -116,12 +116,20 @@ class Article extends \yii\db\ActiveRecord
         return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
+    /**
+     * Сохраняем категорию в статью и связь с таблицей категории
+     * @param $categoryId
+     * @return bool
+     */
     public function saveCategory($categoryId)
     {
         $categoryModel = Category::findOne($categoryId);
+
         if (!empty($categoryModel)){
             $this->link('category', $categoryModel);
+
             return true;
         }
+        return false;
     }
 }

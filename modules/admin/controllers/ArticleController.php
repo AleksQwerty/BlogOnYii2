@@ -12,6 +12,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -155,6 +156,13 @@ class ArticleController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
+    /**
+     * добавление изображения к статье
+     * @param $id
+     * @return string|Response
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     */
     public function actionSetImage($id)
     {
         $model = new UploadImage();
@@ -175,6 +183,13 @@ class ArticleController extends Controller
         return $this->render('image', ['model' => $model]);
     }
 
+    /**
+     * установка категории
+     *
+     * @param $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     */
     public function actionSetCategory($id)
     {
         $article = $this->findModel($id);
@@ -183,14 +198,12 @@ class ArticleController extends Controller
 
         $categories = Category::find()->all();
 
-        $categoryList = ArrayHelper::map($categories, 'id', 'title');
-
         if (Yii::$app->request->isPost) {
-            $category = Yii::$app->request->post('category');
+            $categoryId = Yii::$app->request->post('category');
             /**
              * теперь пробуем ее сохранить в модель статьи
              */
-            if ($article->saveCategory($category)){
+            if ($article->saveCategory($categoryId)){
                 return $this->redirect(['view', 'id' => $article->id]);
             }
         }
@@ -200,7 +213,7 @@ class ArticleController extends Controller
             [
                 'article'                 => $article,
                 'selectedCurrentCategory' => $selectedCurrentCategory,
-                'categoryList'            => $categoryList
+                'categoryList'            => Category::getListCategoriesByIdArray($categories)
             ]
         );
     }
