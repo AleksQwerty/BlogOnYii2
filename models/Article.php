@@ -3,23 +3,23 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "article".
  *
- * @property int $id
- * @property string|null $title
- * @property string|null $description Описание статьи
- * @property string|null $content Содержимое статьи
- * @property string|null $created_at Дата создания статьи
- * @property string|null $image
- * @property int|null $viewed Количество просмотров статьи
- * @property int|null $user_id Id пользователя написавшего статью
- * @property int|null $status Статус статьи
- * @property int|null $category_id Категория статьи
- *
+ * @property int                  $id
+ * @property string|null          $title
+ * @property string|null          $description Описание статьи
+ * @property string|null          $content     Содержимое статьи
+ * @property string|null          $created_at  Дата создания статьи
+ * @property string|null          $image
+ * @property int|null             $viewed      Количество просмотров статьи
+ * @property int|null             $user_id     Id пользователя написавшего статью
+ * @property int|null             $status      Статус статьи
+ * @property int|null             $category_id Категория статьи
  * @property ArticleTagRelation[] $articleTagRelations
- * @property Comment[] $comments
+ * @property Comment[]            $comments
  */
 class Article extends \yii\db\ActiveRecord
 {
@@ -51,15 +51,15 @@ class Article extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Заголовок статьи',
+            'id'          => 'ID',
+            'title'       => 'Заголовок статьи',
             'description' => 'Описание статьи',
-            'content' => 'Содержимое статьи',
-            'created_at' => 'Дата создания статьи',
-            'image' => 'Image',
-            'viewed' => 'Количество просмотров статьи',
-            'user_id' => 'Id пользователя написавшего статью',
-            'status' => 'Статус статьи',
+            'content'     => 'Содержимое статьи',
+            'created_at'  => 'Дата создания статьи',
+            'image'       => 'Image',
+            'viewed'      => 'Количество просмотров статьи',
+            'user_id'     => 'Id пользователя написавшего статью',
+            'status'      => 'Статус статьи',
             'category_id' => 'Категория статьи',
         ];
     }
@@ -84,7 +84,6 @@ class Article extends \yii\db\ActiveRecord
         return $this->hasMany(Comment::className(), ['article_id' => 'id']);
     }
 
-
     public function saveImage($fileName)
     {
         $this->image = $fileName;
@@ -108,7 +107,7 @@ class Article extends \yii\db\ActiveRecord
 
     public function getImage()
     {
-       return ($this->image) ? '/uploads/' . $this->image : '/dont photo.png';
+        return ($this->image) ? '/uploads/' . $this->image : '/dont photo.png';
     }
 
     public function getCategory()
@@ -118,6 +117,7 @@ class Article extends \yii\db\ActiveRecord
 
     /**
      * Сохраняем категорию в статью и связь с таблицей категории
+     *
      * @param $categoryId
      * @return bool
      */
@@ -125,9 +125,58 @@ class Article extends \yii\db\ActiveRecord
     {
         $categoryModel = Category::findOne($categoryId);
 
-        if (!empty($categoryModel)){
+        if (!empty($categoryModel)) {
             $this->link('category', $categoryModel);
 
+            return true;
+        }
+        return false;
+    }
+
+    public function getTags()
+    {
+        return $this->hasMany(Tag::class, ['id' => 'tag_id'])->viaTable(
+            'article_tag_relation',
+            ['article_id' => 'id']
+        );
+    }
+
+    public function getSelectedTags()
+    {
+        $selectedIds = $this->getTags()->select('id')->asArray()->all();
+        return ArrayHelper::getColumn($selectedIds, 'id');
+    }
+
+    /**
+     * Получаем список данных и их id в виде массива ['id' => 'dataName']
+     *
+     * @param $list
+     * @return array
+     */
+    public static function getListDataByIdArray($list): array
+    {
+        return ArrayHelper::map($list, 'id', 'title');
+    }
+
+    /**
+     * сохраняем связь тегов и статьи
+     * @param array $tags
+     * @return bool
+     */
+    public function saveTags(array $tags):bool
+    {
+        if (is_array($tags)) {
+
+            /**
+             * удаляем старые теги если он были
+             */
+            ArticleTagRelation::deleteAll(['article_id' => $this->id]);
+
+            foreach ($tags as $tagId) {
+                $tagModel = Tag::findOne($tagId);
+
+                $this->link('tags', $tagModel);
+            }
             return true;
         }
         return false;

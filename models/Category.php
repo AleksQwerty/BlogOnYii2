@@ -52,13 +52,4 @@ class Category extends \yii\db\ActiveRecord
         return $this->hasMany(Article::class, ['category_id' => 'id']);
     }
 
-    /**
-     * Получаем список категорий и их id в виде массива ['id' => 'categoryName']
-     * @param $categories
-     * @return array
-     */
-    public static function getListCategoriesByIdArray($categories):array
-    {
-        return ArrayHelper::map($categories, 'id', 'title');
-    }
 }

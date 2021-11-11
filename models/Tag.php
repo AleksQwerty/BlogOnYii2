@@ -7,9 +7,8 @@ use Yii;
 /**
  * This is the model class for table "tag".
  *
- * @property int $id
- * @property string|null $title Заголовок тега
- *
+ * @property int                  $id
+ * @property string|null          $title Заголовок тега
  * @property ArticleTagRelation[] $articleTagRelations
  */
 class Tag extends \yii\db\ActiveRecord
@@ -38,18 +37,14 @@ class Tag extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id'    => 'ID',
             'title' => 'Заголовок тега',
         ];
     }
 
-    /**
-     * Gets query for [[ArticleTagRelations]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getArticleTagRelations()
+    public function getArticles()
     {
-        return $this->hasMany(ArticleTagRelation::className(), ['tag_id' => 'id']);
+        return $this->hasMany(Article::class, ['id' => 'article_id'])->viaTable(
+            'article_tag_relation', ['tag_id' => 'id']);
     }
 }

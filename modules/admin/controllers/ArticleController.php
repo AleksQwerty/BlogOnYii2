@@ -5,6 +5,7 @@ namespace app\modules\admin\controllers;
 use app\models\Article;
 use app\models\ArticleSearch;
 use app\models\Category;
+use app\models\Tag;
 use app\models\UploadImage;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -213,7 +214,33 @@ class ArticleController extends Controller
             [
                 'article'                 => $article,
                 'selectedCurrentCategory' => $selectedCurrentCategory,
-                'categoryList'            => Category::getListCategoriesByIdArray($categories)
+                'categoryList'            => Article::getListDataByIdArray($categories)
+            ]
+        );
+    }
+
+    public function actionSetTag($id)
+    {
+        $article = $this->findModel($id);
+
+        $tagModelList = Tag::find()->all();
+
+        $tagListByArticle = $article::getListDataByIdArray($tagModelList);
+
+        $selectedCurrentTag = $article->getSelectedTags();
+
+        if (Yii::$app->request->isPost){
+            $tags = Yii::$app->request->post('tag');
+            if ($article->saveTags($tags)){
+                return $this->redirect(['view', 'id' => $article->id]);
+            }
+        }
+
+        return $this->render(
+            'tag',
+            [
+                'selectedCurrentTag' => $selectedCurrentTag,
+                'tagList'            => $tagListByArticle
             ]
         );
     }

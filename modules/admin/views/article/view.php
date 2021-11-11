@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Tag;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -19,6 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Set Image', ['set-image', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
         <?= Html::a('Set Category', ['set-category', 'id' => $model->id], ['class' => 'btn btn-secondary']) ?>
+        <?= Html::a('Set Tag', ['set-tag', 'id' => $model->id], ['class' => 'btn btn-secondary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -43,6 +45,17 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Категория',
                 'value' => $model->category->title ?? 'Нет категории',
+            ],
+            [
+                'label' => 'Теги',
+                'value' => function ($model){
+                    foreach($model->tags as $tagId)
+                    {
+
+                        $item[] = Tag::findOne($tagId)->title ?? 'Нет выбранных тегов';
+                    }
+                    return implode(', ',$item);
+                }
             ],
         ],
     ]) ?>
