@@ -92,7 +92,7 @@ class SiteController extends Controller
         /**
          * список категорий посты
          */
-        $categoryList = Article::getCategoryList();
+        $categoryList = Category::find()->all();
 
         return $this->render(
             'index',

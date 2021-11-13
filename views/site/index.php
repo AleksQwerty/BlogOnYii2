@@ -102,8 +102,8 @@ use yii\widgets\LinkPager;
                         <ul>
                             <?php foreach ($categoryList as $category) :?>
                             <li>
-                                <a href="#"><?=$category['title']?></a>
-                                <span class="post-count pull-right">(<?=$category['total_art']?>)</span>
+                                <a href="#"><?=$category->title?></a>
+                                <span class="post-count pull-right">(<?=$category->getArticles()->count()?>)</span>
                             </li>
                             <?php endforeach;?>
                         </ul>
