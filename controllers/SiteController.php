@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Article;
 use Yii;
+use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -20,17 +22,17 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only'  => ['logout'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow'   => true,
+                        'roles'   => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
+            'verbs'  => [
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -44,11 +46,11 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'error' => [
+            'error'   => [
                 'class' => 'yii\web\ErrorAction',
             ],
             'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
+                'class'           => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
@@ -61,7 +63,27 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        // build a DB query to get all articles with status = 1
+        $query = Article::find();
+
+        // get the total number of articles (but do not fetch the article data yet)
+        $count = $query->count();
+
+        // create a pagination object with the total count
+        $pagination = new Pagination(['totalCount' => $count, 'pageSize' => 2]);
+
+        // limit the query using the pagination and retrieve the articles
+        $articles = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+        return $this->render(
+            'index',
+            [
+                'articles'   => $articles,
+                'pagination' => $pagination,
+            ]
+        );
     }
 
     /**
@@ -81,9 +103,12 @@ class SiteController extends Controller
         }
 
         $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'login',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -111,9 +136,12 @@ class SiteController extends Controller
 
             return $this->refresh();
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'contact',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -125,4 +153,20 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    public function actionView()
+    {
+        return $this->render('single');
+    }
+
+    public function actionError()
+    {
+        return $this->render('error');
+    }
+
+    public function actionCategory()
+    {
+        return $this->render('category');
+    }
+
 }
