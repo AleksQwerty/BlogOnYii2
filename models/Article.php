@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -21,7 +23,7 @@ use yii\helpers\ArrayHelper;
  * @property ArticleTagRelation[] $articleTagRelations
  * @property Comment[]            $comments
  */
-class Article extends \yii\db\ActiveRecord
+class Article extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -30,6 +32,7 @@ class Article extends \yii\db\ActiveRecord
     {
         return 'article';
     }
+
 
     /**
      * {@inheritdoc}
@@ -180,5 +183,48 @@ class Article extends \yii\db\ActiveRecord
             return true;
         }
         return false;
+    }
+
+    /**
+     * приводим дату к единому формату вывода для view
+     * @param $date
+     * @return false|string
+     */
+    public function prepareDateToFormat($date)
+    {
+        return date('F j, Y', strtotime($date));
+    }
+
+    /**
+     * 3 самые популярные посты по просмотрам
+     * @return array|ActiveRecord[]
+     */
+    public static function getPopularPosts()
+    {
+        return self::find()->orderBy(['viewed' => SORT_DESC])->limit(3)->all();
+    }
+
+    /**
+     * Возвращаем 4 последние поста
+     * @return array|ActiveRecord[]
+     */
+    public static function getRecentPosts()
+    {
+        return self::find()->orderBy(['created_at' => SORT_DESC])->limit(4)->all();
+    }
+
+    /**
+     * Возвращаем список категорий с количеством статей по каждой из них
+     * @return array
+     */
+    public static function getCategoryList()
+    {
+        return (new Query())
+            ->select(['title' => 'cat.title', 'total_art' => 'cat.id'])
+            ->from(['art' => Article::tableName()])
+            ->innerJoin(['cat' => Category::tableName(), 'art.category_id = cat.id'])
+            ->groupBy('cat.id')
+            ->orderBy(['total_art' => SORT_DESC])
+            ->all();
     }
 }

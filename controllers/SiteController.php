@@ -3,8 +3,10 @@
 namespace app\controllers;
 
 use app\models\Article;
+use app\models\Category;
 use Yii;
 use yii\data\Pagination;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -77,11 +79,29 @@ class SiteController extends Controller
             ->limit($pagination->limit)
             ->all();
 
+        /**
+         * популярные посты
+         */
+        $popularPosts = Article::getPopularPosts();
+
+        /**
+         * последние посты
+         */
+        $recentPosts = Article::getRecentPosts();
+
+        /**
+         * список категорий посты
+         */
+        $categoryList = Article::getCategoryList();
+
         return $this->render(
             'index',
             [
-                'articles'   => $articles,
-                'pagination' => $pagination,
+                'articles'     => $articles,
+                'pagination'   => $pagination,
+                'popularPosts' => $popularPosts,
+                'recentPosts'  => $recentPosts,
+                'categoryList' => $categoryList,
             ]
         );
     }
@@ -154,9 +174,10 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
-    public function actionView()
+    public function actionView($id)
     {
-        return $this->render('single');
+        $singleArticle = Article::findOne($id);
+        return $this->render('single', ['single_article' => $singleArticle]);
     }
 
     public function actionError()

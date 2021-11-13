@@ -4,6 +4,8 @@ use app\models\Article;
 use yii\widgets\LinkPager;
 
 /** @var $articles Article */
+/** @var $popularPosts Article */
+/** @var $recentPosts Article */
 ?>
 
 <!--main content start-->
@@ -36,9 +38,12 @@ use yii\widgets\LinkPager;
                             </div>
                         </div>
                         <div class="social-share">
-                            <span class="social-share-title pull-left text-capitalize">By <a href="#">Rubel</a> On February 12, 2016</span>
+                            <span class="social-share-title pull-left text-capitalize">By <a href="#">Rubel</a> On
+                                <?=$article->prepareDateToFormat($article->created_at)?>
+                            </span>
                             <ul class="text-center pull-right">
-                                <li><a class="s-facebook" href="#"><i class="fa fa-eye"></i></a></li><?=$article->viewed?>
+                                <li><a class="s-facebook" href="#"><i class="fa fa-eye"></i></a></li>
+                                <?=$article->viewed?>
                             </ul>
                         </div>
                     </div>
@@ -48,141 +53,59 @@ use yii\widgets\LinkPager;
             </div>
             <div class="col-md-4" data-sticky_column>
                 <div class="primary-sidebar">
-
+                    <!--тут выводятся наиболее популярные 3 поста -->
                     <aside class="widget">
                         <h3 class="widget-title text-uppercase text-center">Popular Posts</h3>
+                        <?php foreach ($popularPosts as $singlePost) : ?>
+                            <div class="popular-post">
 
-                        <div class="popular-post">
-
-
-                            <a href="#" class="popular-img"><img src="/public/images/p1.jpg" alt="">
-
-                                <div class="p-overlay"></div>
-                            </a>
-
-                            <div class="p-content">
-                                <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                <span class="p-date">February 15, 2016</span>
-
-                            </div>
-                        </div>
-                        <div class="popular-post">
-
-                            <a href="#" class="popular-img"><img src="/public/images/p1.jpg" alt="">
+                            <a href="#" class="popular-img"><img src="<?=$singlePost->getImage()?>" alt="">
 
                                 <div class="p-overlay"></div>
                             </a>
 
                             <div class="p-content">
-                                <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                <span class="p-date">February 15, 2016</span>
+                                <a href="#" class="text-uppercase"><?=$singlePost->title?></a>
+                                <span class="p-date"><?=$singlePost->prepareDateToFormat($singlePost->created_at)?></span>
+                                <ul class="text-center pull-right">
+                                    <i class="fa fa-eye"></i>
+                                    <?=$singlePost->viewed?>
+                                </ul>
                             </div>
                         </div>
-                        <div class="popular-post">
+                        <?php endforeach;?>
 
-
-                            <a href="#" class="popular-img"><img src="/public/images/p1.jpg" alt="">
-
-                                <div class="p-overlay"></div>
-                            </a>
-
-                            <div class="p-content">
-                                <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                <span class="p-date">February 15, 2016</span>
-                            </div>
-                        </div>
                     </aside>
                     <aside class="widget pos-padding">
+                        <!--тут выводятся последние 4 поста -->
                         <h3 class="widget-title text-uppercase text-center">Recent Posts</h3>
+                        <?php foreach ($recentPosts as $recentPost) :?>
+                            <div class="thumb-latest-posts">
 
-                        <div class="thumb-latest-posts">
-
-
-                            <div class="media">
-                                <div class="media-left">
-                                    <a href="#" class="popular-img"><img src="/public/images/r-p.jpg" alt="">
-                                        <div class="p-overlay"></div>
-                                    </a>
-                                </div>
-                                <div class="p-content">
-                                    <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                    <span class="p-date">February 15, 2016</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="thumb-latest-posts">
-
-
-                            <div class="media">
-                                <div class="media-left">
-                                    <a href="#" class="popular-img"><img src="/public/images/r-p.jpg" alt="">
-                                        <div class="p-overlay"></div>
-                                    </a>
-                                </div>
-                                <div class="p-content">
-                                    <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                    <span class="p-date">February 15, 2016</span>
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="#" class="popular-img"><img src="<?=$recentPost->getImage()?>" alt="">
+                                            <div class="p-overlay"></div>
+                                        </a>
+                                    </div>
+                                    <div class="p-content">
+                                        <a href="#" class="text-uppercase"><?=$recentPost->title?></a>
+                                        <span class="p-date"><?=$recentPost->prepareDateToFormat($recentPost->created_at)?></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="thumb-latest-posts">
-
-
-                            <div class="media">
-                                <div class="media-left">
-                                    <a href="#" class="popular-img"><img src="/public/images/r-p.jpg" alt="">
-                                        <div class="p-overlay"></div>
-                                    </a>
-                                </div>
-                                <div class="p-content">
-                                    <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                    <span class="p-date">February 15, 2016</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="thumb-latest-posts">
-
-
-                            <div class="media">
-                                <div class="media-left">
-                                    <a href="#" class="popular-img"><img src="/public/images/r-p.jpg" alt="">
-                                        <div class="p-overlay"></div>
-                                    </a>
-                                </div>
-                                <div class="p-content">
-                                    <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                    <span class="p-date">February 15, 2016</span>
-                                </div>
-                            </div>
-                        </div>
+                        <?php endforeach;?>
+                    <!--тут выведем все категории с количеством статей по каждой из категорий-->
                     </aside>
                     <aside class="widget border pos-padding">
                         <h3 class="widget-title text-uppercase text-center">Categories</h3>
                         <ul>
+                            <?php foreach ($categoryList as $category) :?>
                             <li>
-                                <a href="#">Food & Drinks</a>
-                                <span class="post-count pull-right"> (2)</span>
+                                <a href="#"><?=$category['title']?></a>
+                                <span class="post-count pull-right">(<?=$category['total_art']?>)</span>
                             </li>
-                            <li>
-                                <a href="#">Travel</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">Business</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">Story</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">DIY & Tips</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">Lifestyle</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
+                            <?php endforeach;?>
                         </ul>
                     </aside>
                 </div>
