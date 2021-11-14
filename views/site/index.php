@@ -1,11 +1,15 @@
 <?php
 
 use app\models\Article;
+use yii\helpers\Url;
 use yii\widgets\LinkPager;
 
 /** @var $articles Article */
-/** @var $popularPosts Article */
-/** @var $recentPosts Article */
+/** @var $article Article */
+/** @var $popularPost Article */
+/** @var $recentPost Article */
+/** @var $singlePost Article */
+/** @var $category Article */
 ?>
 
 <!--main content start-->
@@ -16,9 +20,9 @@ use yii\widgets\LinkPager;
                 <?php foreach ($articles as $article):?>
                 <article class="post">
                     <div class="post-thumb">
-                        <a href="blog.html"><img src="<?=$article->getImage()?>" alt=""></a>
+                        <a href="<?=Url::toRoute(['/site/view', 'id' => $article->id])?>"><img src="<?=$article->getImage()?>" alt=""></a>
 
-                        <a href="blog.html" class="post-thumb-overlay text-center">
+                        <a href="<?=Url::toRoute(['/site/view', 'id' => $article->id])?>" class="post-thumb-overlay text-center">
                             <div class="text-uppercase text-center">View Post</div>
                         </a>
                     </div>
@@ -31,7 +35,7 @@ use yii\widgets\LinkPager;
 
                         </header>
                         <div class="entry-content">
-                            <p><?=$article->content?></p>
+                            <p><?=Article::getCutString($article->content)?></p>
 
                             <div class="btn-continue-reading text-center text-uppercase">
                                 <a href="/site/view/?id=<?=$article->id?>" class="more-link">Continue Reading</a>
@@ -39,7 +43,7 @@ use yii\widgets\LinkPager;
                         </div>
                         <div class="social-share">
                             <span class="social-share-title pull-left text-capitalize">By <a href="#">Rubel</a> On
-                                <?=$article->prepareDateToFormat($article->created_at)?>
+                                <?=$article->prepareDateToFormat()?>
                             </span>
                             <ul class="text-center pull-right">
                                 <li><a class="s-facebook" href="#"><i class="fa fa-eye"></i></a></li>
@@ -59,53 +63,53 @@ use yii\widgets\LinkPager;
                         <?php foreach ($popularPosts as $singlePost) : ?>
                             <div class="popular-post">
 
-                            <a href="#" class="popular-img"><img src="<?=$singlePost->getImage()?>" alt="">
+                                <a href="<?=Url::toRoute(['/site/view', 'id' => $singlePost->id])?>" class="popular-img"><img src="<?= $singlePost->getImage() ?>" alt="">
 
-                                <div class="p-overlay"></div>
-                            </a>
+                                    <div class="p-overlay"></div>
+                                </a>
 
-                            <div class="p-content">
-                                <a href="#" class="text-uppercase"><?=$singlePost->title?></a>
-                                <span class="p-date"><?=$singlePost->prepareDateToFormat($singlePost->created_at)?></span>
-                                <ul class="text-center pull-right">
-                                    <i class="fa fa-eye"></i>
-                                    <?=$singlePost->viewed?>
-                                </ul>
+                                <div class="p-content">
+                                    <a href="<?=Url::toRoute(['/site/view', 'id' => $singlePost->id])?>" class="text-uppercase"><?= $singlePost->title ?></a>
+                                    <span class="p-date"><?= $singlePost->prepareDateToFormat() ?></span>
+                                    <ul class="text-center pull-right">
+                                        <i class="fa fa-eye"></i>
+                                        <?= $singlePost->viewed ?>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <?php endforeach;?>
+                        <?php endforeach; ?>
 
                     </aside>
                     <aside class="widget pos-padding">
                         <!--тут выводятся последние 4 поста -->
                         <h3 class="widget-title text-uppercase text-center">Recent Posts</h3>
-                        <?php foreach ($recentPosts as $recentPost) :?>
+                        <?php foreach ($recentPosts as $recentPost) : ?>
                             <div class="thumb-latest-posts">
 
                                 <div class="media">
                                     <div class="media-left">
-                                        <a href="#" class="popular-img"><img src="<?=$recentPost->getImage()?>" alt="">
+                                        <a href="<?=Url::toRoute(['/site/view', 'id' => $recentPost->id])?>" class="popular-img"><img src="<?= $recentPost->getImage() ?>" alt="">
                                             <div class="p-overlay"></div>
                                         </a>
                                     </div>
                                     <div class="p-content">
-                                        <a href="#" class="text-uppercase"><?=$recentPost->title?></a>
-                                        <span class="p-date"><?=$recentPost->prepareDateToFormat($recentPost->created_at)?></span>
+                                        <a href="<?=Url::toRoute(['/site/view', 'id' => $recentPost->id])?>" class="text-uppercase"><?= $recentPost->title ?></a>
+                                        <span class="p-date"><?= $recentPost->prepareDateToFormat() ?></span>
                                     </div>
                                 </div>
                             </div>
-                        <?php endforeach;?>
-                    <!--тут выведем все категории с количеством статей по каждой из категорий-->
+                        <?php endforeach; ?>
+                        <!--тут выведем все категории с количеством статей по каждой из категорий-->
                     </aside>
                     <aside class="widget border pos-padding">
                         <h3 class="widget-title text-uppercase text-center">Categories</h3>
                         <ul>
-                            <?php foreach ($categoryList as $category) :?>
-                            <li>
-                                <a href="#"><?=$category->title?></a>
-                                <span class="post-count pull-right">(<?=$category->getArticles()->count()?>)</span>
-                            </li>
-                            <?php endforeach;?>
+                            <?php foreach ($categoryList as $category) : ?>
+                                <li>
+                                    <a href="<?=Url::toRoute(['/site/category', 'id' =>  $category->id])?>"><?= $category->title ?></a>
+                                    <span class="post-count pull-right">(<?= $category->getArticlesCount() ?>)</span>
+                                </li>
+                            <?php endforeach; ?>
                         </ul>
                     </aside>
                 </div>

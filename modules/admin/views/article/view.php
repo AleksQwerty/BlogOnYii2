@@ -49,12 +49,16 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Теги',
                 'value' => function ($model){
-                    foreach($model->tags as $tagId)
-                    {
+                    if (!empty($model->tags)){
+                        foreach($model->tags as $tagId)
+                        {
 
-                        $item[] = Tag::findOne($tagId)->title ?? 'Нет выбранных тегов';
+                            $item[] = Tag::findOne($tagId)->title ?? 'Нет выбранных тегов';
+                        }
+                        return implode(', ', $item);
+                    }else{
+                        return 'Нет выбранных тегов';
                     }
-                    return implode(', ',$item);
                 }
             ],
         ],

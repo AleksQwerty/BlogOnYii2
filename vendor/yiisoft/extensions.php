@@ -48,4 +48,13 @@ return array (
       '@yii/swiftmailer' => $vendorDir . '/yiisoft/yii2-swiftmailer/src',
     ),
   ),
+  'vintage/yii2-tinify' => 
+  array (
+    'name' => 'vintage/yii2-tinify',
+    'version' => '2.1.0.0',
+    'alias' => 
+    array (
+      '@vintage/tinify' => $vendorDir . '/vintage/yii2-tinify/src',
+    ),
+  ),
 );

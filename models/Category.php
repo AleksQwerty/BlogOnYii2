@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
 /**
  * This is the model class for table "category".
  *
- * @property int $id
+ * @property int         $id
  * @property string|null $title Заголовок  категории
  */
 class Category extends \yii\db\ActiveRecord
@@ -38,18 +38,29 @@ class Category extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id'    => 'ID',
             'title' => 'Заголовок  категории',
         ];
     }
 
     /**
      * Достаем все статьи по данной категории
+     *
      * @return ActiveQuery
      */
     public function getArticles()
     {
         return $this->hasMany(Article::class, ['category_id' => 'id']);
+    }
+
+    public function getArticlesCount()
+    {
+        return $this->getArticles()->count();
+    }
+
+    public static function getAllCategory()
+    {
+        return self::find()->all();
     }
 
 }

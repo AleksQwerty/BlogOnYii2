@@ -14,7 +14,7 @@
                                 <div class="col-sm-4 col-sm-offset-4">
                                     <form role="search" method="get" id="searchform" action="#">
                                         <div>
-                                            <input type="text" placeholder="Search and hit enter..." name="s" id="s"/>
+                                            <input type="text" placeholder="Search and hit enter..." name="search" id="s"/>
                                         </div>
                                     </form>
                                     <p class="go-back-home"><a href="/">

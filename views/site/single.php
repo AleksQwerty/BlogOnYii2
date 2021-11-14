@@ -1,8 +1,15 @@
 <?php
 
 use app\models\Article;
+use yii\helpers\Url;
 
 /** @var $sinleArticle Article */
+/** @var $article Article */
+/** @var $recentPost Article */
+/** @var $singlePost Article */
+/** @var $category Article */
+/** @var $articleListByCategory Article */
+
 ?>
 
 <!--main content start-->
@@ -12,27 +19,31 @@ use app\models\Article;
             <div class="col-md-8">
                 <article class="post">
                     <div class="post-thumb">
-                        <a href="blog.html"><img src="/public/images/blog-1.jpg" alt=""></a>
+                        <a href="blog.html"><img src="<?=$singleArticle->getImage()?>" alt=""></a>
                     </div>
                     <div class="post-content">
                         <header class="entry-header text-center text-uppercase">
                             <!--Тут выводим название категории-->
-                            <h6><a href="#"> <?=$single_article->category->title?></a></h6>
+                            <h6><a href="<?=Url::toRoute(['/site/category', 'id' => $singleArticle->category_id])?>"><?=$singleArticle->category->title?></a></h6>
                             <!--Тут выводим название статьи-->
-                            <h1 class="entry-title"><a href="blog.html"><?=$single_article->title?></a></h1>
+                            <h1 class="entry-title"><a href="blog.html"><?=$singleArticle->title?></a></h1>
                         </header>
                         <div class="entry-content">
                             <!--Тут выводим содержимое статьи-->
-                            <p><?=$single_article->content?></p>
+                            <p><?=$singleArticle->content?></p>
                         </div>
                         <div class="decoration">
                             <a href="#" class="btn btn-default">Decoration</a>
                             <a href="#" class="btn btn-default">Decoration</a>
+                                <i class="fa fa-eye text-right"></i>
+                                <?= $singleArticle->viewed ?>
                         </div>
 
                         <div class="social-share">
 							<span
-                                class="social-share-title pull-left text-capitalize">By Rubel On <?=$single_article->prepareDateToFormat($single_article->created_at)?></span>
+                                class="social-share-title pull-left text-capitalize">By Rubel On
+                                <?=$singleArticle->prepareDateToFormat($singleArticle->created_at)?>
+                            </span>
                             <ul class="text-center pull-right">
                                 <li><a class="s-facebook" href="#"><i class="fa fa-facebook"></i></a></li>
                                 <li><a class="s-twitter" href="#"><i class="fa fa-twitter"></i></a></li>
@@ -84,64 +95,25 @@ use app\models\Article;
                         </div>
                     </div>
                 </div><!--blog next previous end-->
+                <?php if (count($articleListByCategory) > 1) :?>
                 <div class="related-post-carousel"><!--related post carousel-->
                     <div class="related-heading">
                         <h4>You might also like</h4>
                     </div>
                     <div class="items">
+                        <?php foreach($articleListByCategory as $article):?>
+                        <?php  if($article->id === $singleArticle->id) {continue; }?>
                         <div class="single-item">
-                            <a href="#">
-                                <img src="/public/images/related-post-1.jpg" alt="">
+                            <a href="<?=Url::toRoute(['/site/view', 'id' => $article->id])?>">
+                                <img src="<?=$article->getImage()?>" alt="">
 
-                                <p>Just Wondering at Beach</p>
+                                <p><?=$article->title?></p>
                             </a>
                         </div>
-
-
-                        <div class="single-item">
-                            <a href="#">
-                                <img src="/public/images/related-post-2.jpg" alt="">
-
-                                <p>Just Wondering at Beach</p>
-                            </a>
-                        </div>
-
-
-                        <div class="single-item">
-                            <a href="#">
-                                <img src="/public/images/related-post-3.jpg" alt="">
-
-                                <p>Just Wondering at Beach</p>
-                            </a>
-                        </div>
-
-
-                        <div class="single-item">
-                            <a href="#">
-                                <img src="/public/images/related-post-1.jpg" alt="">
-
-                                <p>Just Wondering at Beach</p>
-                            </a>
-                        </div>
-
-                        <div class="single-item">
-                            <a href="#">
-                                <img src="/public/images/related-post-2.jpg" alt="">
-
-                                <p>Just Wondering at Beach</p>
-                            </a>
-                        </div>
-
-
-                        <div class="single-item">
-                            <a href="#">
-                                <img src="/public/images/related-post-3.jpg" alt="">
-
-                                <p>Just Wondering at Beach</p>
-                            </a>
-                        </div>
+                        <?php endforeach;?>
                     </div>
                 </div><!--related post carousel-->
+                <?php endif;?>
                 <div class="bottom-comment"><!--bottom comment-->
                     <h4>3 comments</h4>
 
@@ -200,143 +172,59 @@ use app\models\Article;
             </div>
             <div class="col-md-4" data-sticky_column>
                 <div class="primary-sidebar">
+                    <!--тут выводятся наиболее популярные 3 поста -->
                     <aside class="widget">
                         <h3 class="widget-title text-uppercase text-center">Popular Posts</h3>
+                        <?php foreach ($popularPosts as $singlePost) : ?>
+                            <div class="popular-post">
 
-                        <div class="popular-post">
+                                <a href="<?=Url::toRoute(['/site/view', 'id' => $singlePost->id])?>" class="popular-img"><img src="<?= $singlePost->getImage() ?>" alt="">
 
+                                    <div class="p-overlay"></div>
+                                </a>
 
-                            <a href="#" class="popular-img"><img src="/public/images/p1.jpg" alt="">
-
-                                <div class="p-overlay"></div>
-                            </a>
-
-                            <div class="p-content">
-                                <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                <span class="p-date">February 15, 2016</span>
-
+                                <div class="p-content">
+                                    <a href="<?=Url::toRoute(['/site/view', 'id' => $singlePost->id])?>" class="text-uppercase"><?= $singlePost->title ?></a>
+                                    <span class="p-date"><?= $singlePost->prepareDateToFormat() ?></span>
+                                    <ul class="text-center pull-right">
+                                        <i class="fa fa-eye"></i>
+                                        <?= $singlePost->viewed ?>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <div class="popular-post">
+                        <?php endforeach; ?>
 
-                            <a href="#" class="popular-img"><img src="/public/images/p1.jpg" alt="">
-
-                                <div class="p-overlay"></div>
-                            </a>
-
-                            <div class="p-content">
-                                <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                <span class="p-date">February 15, 2016</span>
-                            </div>
-                        </div>
-                        <div class="popular-post">
-
-
-                            <a href="#" class="popular-img"><img src="/public/images/p1.jpg" alt="">
-
-                                <div class="p-overlay"></div>
-                            </a>
-
-                            <div class="p-content">
-                                <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                <span class="p-date">February 15, 2016</span>
-                            </div>
-                        </div>
                     </aside>
                     <aside class="widget pos-padding">
+                        <!--тут выводятся последние 4 поста -->
                         <h3 class="widget-title text-uppercase text-center">Recent Posts</h3>
+                        <?php foreach ($recentPosts as $recentPost) : ?>
+                            <div class="thumb-latest-posts">
 
-                        <div class="thumb-latest-posts">
-
-                            <div class="media">
-                                <div class="media-left">
-                                    <a href="#" class="popular-img"><img src="/public/images/r-p.jpg" alt="">
-
-                                        <div class="p-overlay"></div>
-                                    </a>
-                                </div>
-                                <div class="p-content">
-                                    <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                    <span class="p-date">February 15, 2016</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="thumb-latest-posts">
-
-
-                            <div class="media">
-                                <div class="media-left">
-                                    <a href="#" class="popular-img"><img src="/public/images/r-p.jpg" alt="">
-
-                                        <div class="p-overlay"></div>
-                                    </a>
-                                </div>
-                                <div class="p-content">
-                                    <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                    <span class="p-date">February 15, 2016</span>
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="<?=Url::toRoute(['/site/view', 'id' => $recentPost->id])?>" class="popular-img"><img src="<?= $recentPost->getImage() ?>" alt="">
+                                            <div class="p-overlay"></div>
+                                        </a>
+                                    </div>
+                                    <div class="p-content">
+                                        <a href="<?=Url::toRoute(['/site/view', 'id' => $recentPost->id])?>" class="text-uppercase"><?= $recentPost->title ?></a>
+                                        <span class="p-date"><?= $recentPost->prepareDateToFormat() ?></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="thumb-latest-posts">
-
-
-                            <div class="media">
-                                <div class="media-left">
-                                    <a href="#" class="popular-img"><img src="/public/images/r-p.jpg" alt="">
-
-                                        <div class="p-overlay"></div>
-                                    </a>
-                                </div>
-                                <div class="p-content">
-                                    <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                    <span class="p-date">February 15, 2016</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="thumb-latest-posts">
-
-
-                            <div class="media">
-                                <div class="media-left">
-                                    <a href="#" class="popular-img"><img src="/public/images/r-p.jpg" alt="">
-
-                                        <div class="p-overlay"></div>
-                                    </a>
-                                </div>
-                                <div class="p-content">
-                                    <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                                    <span class="p-date">February 15, 2016</span>
-                                </div>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
+                        <!--тут выведем все категории с количеством статей по каждой из категорий-->
                     </aside>
                     <aside class="widget border pos-padding">
                         <h3 class="widget-title text-uppercase text-center">Categories</h3>
                         <ul>
-                            <li>
-                                <a href="#">Food & Drinks</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">Travel</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">Business</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">Story</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">DIY & Tips</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
-                            <li>
-                                <a href="#">Lifestyle</a>
-                                <span class="post-count pull-right"> (2)</span>
-                            </li>
+                            <?php foreach ($categoryList as $category) : ?>
+                                <li>
+                                    <a href="<?=Url::toRoute(['/site/category', 'id' =>  $category->id])?>"><?= $category->title ?></a>
+                                    <span class="post-count pull-right">(<?= $category->getArticlesCount() ?>)</span>
+                                </li>
+                            <?php endforeach; ?>
                         </ul>
                     </aside>
                 </div>

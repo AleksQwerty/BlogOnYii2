@@ -2,16 +2,21 @@
 
 /* @var $this \yii\web\View */
 /* @var $content string */
+/* @var $mostPopularPost Article string */
 
 use app\assets\AppAsset;
 use app\assets\PublicAsset;
+use app\models\Article;
 use app\widgets\Alert;
 use yii\bootstrap4\Breadcrumbs;
 use yii\bootstrap4\Html;
 use yii\bootstrap4\Nav;
 use yii\bootstrap4\NavBar;
+use yii\helpers\Url;
 
 PublicAsset::register($this);
+
+$mostPopularPost = Article::getMostPopularPost();
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -45,12 +50,12 @@ PublicAsset::register($this);
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                 <ul class="nav navbar-nav text-uppercase">
-                    <li><a data-toggle="dropdown" class="dropdown-toggle" href="/">Home</a></li>
+                    <li><a href="/">Home</a></li>
                 </ul>
                 <div class="i_con">
                     <ul class="nav navbar-nav text-uppercase">
                         <li><a href="/site/login">Login</a></li>
-                        <li><a href="/site/register ">Register</a></li>
+                        <li><a href="/site/register">Register</a></li>
                     </ul>
                 </div>
 
@@ -76,11 +81,9 @@ PublicAsset::register($this);
                     <div class="address">
                         <h4 class="text-uppercase">contact Info</h4>
 
-                        <p> 14529/12 NK Streets, DC, KZ</p>
+                        <p> 125480 GP Streets, Rus</p>
 
-                        <p> Phone: +123 456 78900</p>
-
-                        <p>mytreasure.com</p>
+                        <p> Phone: +7777777777</p>
                     </div>
                 </aside>
             </div>
@@ -166,11 +169,11 @@ PublicAsset::register($this);
 
                     <div class="custom-post">
                         <div>
-                            <a href="#"><img src="/public/images/footer-img.png" alt=""></a>
+                            <a href="<?=Url::toRoute(['/site/view', 'id' => $mostPopularPost->id])?>"><img src="<?=$mostPopularPost->getImage()?>" alt=""></a>
                         </div>
                         <div>
-                            <a href="#" class="text-uppercase">Home is peaceful Place</a>
-                            <span class="p-date">February 15, 2016</span>
+                            <a href="<?=Url::toRoute(['/site/view', 'id' => $mostPopularPost->id])?>" class="text-uppercase"><?=$mostPopularPost->title?></a>
+                            <span class="p-date"><?=$mostPopularPost->prepareDateToFormat()?></span>
                         </div>
                     </div>
                 </aside>

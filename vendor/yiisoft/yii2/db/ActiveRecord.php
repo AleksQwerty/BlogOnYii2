@@ -7,6 +7,7 @@
 
 namespace yii\db;
 
+use Cassandra\Exception\ValidationException;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\base\InvalidConfigException;
@@ -795,5 +796,21 @@ class ActiveRecord extends BaseActiveRecord
         $transactions = $this->transactions();
 
         return isset($transactions[$scenario]) && ($transactions[$scenario] & $operation);
+    }
+
+    /**
+     * Метод попытается выполнить сохранение в базу, при неудаче выбросит Exception
+     * @param bool $runValidation
+     * @param null $attributeNmaes
+     * @return bool
+     * @throws Exception
+     */
+    public function saveOrThrow($runValidation = true, $attributeNmaes = null)
+    {
+        if (!parent::save($runValidation, $attributeNmaes)){
+            throw new Exception($this->getFirstErrors());
+        }
+
+        return true;
     }
 }

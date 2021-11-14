@@ -3,7 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\data\Pagination;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
@@ -26,13 +28,22 @@ use yii\helpers\ArrayHelper;
 class Article extends ActiveRecord
 {
     /**
+     * количество записей на странице по умолчанию
+     */
+    const DEFAULT_PAGE_SIZE = 2;
+
+    /**
+     *
+     */
+    const FIRST_OCCURRENCE_IN_STRING = 0;
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'article';
     }
-
 
     /**
      * {@inheritdoc}
@@ -190,9 +201,9 @@ class Article extends ActiveRecord
      * @param $date
      * @return false|string
      */
-    public function prepareDateToFormat($date)
+    public function prepareDateToFormat()
     {
-        return date('F j, Y', strtotime($date));
+        return Yii::$app->formatter->asDate($this->created_at);
     }
 
     /**
@@ -217,7 +228,7 @@ class Article extends ActiveRecord
      * Возвращаем список категорий с количеством статей по каждой из них
      * @return array
      */
-    public static function getCategoryList()
+    public static function getCategoryList(): array
     {
         return (new Query())
             ->select(['title' => 'cat.title', 'total_art' => 'cat.id'])
@@ -226,5 +237,92 @@ class Article extends ActiveRecord
             ->groupBy('cat.id')
             ->orderBy(['total_art' => SORT_DESC])
             ->all();
+    }
+
+    /**
+     * @param int $pageSize
+     * @return array
+     */
+    public static function getAllPagination($pageSize = self::DEFAULT_PAGE_SIZE, $categoryId = null): array
+    {
+        // build a DB query to get all articles with status = 1
+        $query = Article::find();
+
+        // get the total number of articles (but do not fetch the article data yet)
+        $count = $query
+            ->andFilterWhere(['category_id' => $categoryId])
+            ->count();
+
+        // create a pagination object with the total count
+        $pagination = new Pagination(['totalCount' => $count, 'pageSize' => $pageSize]);
+
+        // limit the query using the pagination and retrieve the articles
+        $articles = $query->offset($pagination->offset)
+            ->orderBy(['id' => SORT_DESC])
+            ->limit($pagination->limit)
+            ->all();
+
+        return [
+            'articles'   => $articles,
+            'pagination' => $pagination
+        ];
+    }
+
+    /**
+     * возвращает обрезанную строку до 255 символов с многоточием в конце если строка больше 255 символов
+     * @param     $string
+     * @param int $length
+     * @return string
+     */
+    public static function getCutString($string, $length = 255)
+    {
+        if (strlen($string) > $length){
+            return mb_strimwidth($string, self::FIRST_OCCURRENCE_IN_STRING, $length, '...');
+        }else{
+            return $string;
+        }
+    }
+
+    /**
+     * @param $id
+     * @throws Exception
+     */
+    public static function incrementViewsByArticle($id)
+    {
+        $articleModel = self::findOne($id);
+        if ($articleModel){
+            $articleModel->viewed++;
+            $articleModel->saveOrThrow();
+        }
+    }
+
+    /**
+     * @param $id
+     * @return Article[]
+     */
+    public static function getListArticlesByCategory($id)
+    {
+        $categoryIdByArticle = Article::findOne($id)->category_id;
+
+        return Article::findAll(['category_id' => $categoryIdByArticle]);
+    }
+
+    /**
+     * получаем наиболее популярный пост в данной категории
+     * @param $categoryid
+     * @return array|ActiveRecord|null
+     */
+    public static function getMostPopularPostInCategory($categoryid)
+    {
+        return self::find()->where(['category_id' => $categoryid])->orderby(['viewed' => SORT_DESC])->limit(1)->one();
+    }
+
+    /**
+     * получаем самый популярный пост
+     * @return array|ActiveRecord|null
+     */
+    public static function getMostPopularPost()
+    {
+        return self::find()->orderby(['viewed' => SORT_DESC])->limit(1)->one();
     }
 }

@@ -6,6 +6,7 @@ use app\models\Article;
 use app\models\Category;
 use Yii;
 use yii\data\Pagination;
+use yii\db\Exception;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -65,19 +66,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        // build a DB query to get all articles with status = 1
-        $query = Article::find();
-
-        // get the total number of articles (but do not fetch the article data yet)
-        $count = $query->count();
-
-        // create a pagination object with the total count
-        $pagination = new Pagination(['totalCount' => $count, 'pageSize' => 2]);
-
-        // limit the query using the pagination and retrieve the articles
-        $articles = $query->offset($pagination->offset)
-            ->limit($pagination->limit)
-            ->all();
+        $dataPagination = Article::getAllPagination(3);
 
         /**
          * популярные посты
@@ -92,13 +81,13 @@ class SiteController extends Controller
         /**
          * список категорий посты
          */
-        $categoryList = Category::find()->all();
+        $categoryList = Category::getAllCategory();
 
         return $this->render(
             'index',
             [
-                'articles'     => $articles,
-                'pagination'   => $pagination,
+                'articles'     => $dataPagination['articles'],
+                'pagination'   => $dataPagination['pagination'],
                 'popularPosts' => $popularPosts,
                 'recentPosts'  => $recentPosts,
                 'categoryList' => $categoryList,
@@ -167,17 +156,89 @@ class SiteController extends Controller
     /**
      * Displays about page.
      *
+     * @param $id
      * @return string
+     * @throws Exception
      */
-    public function actionAbout()
+    public function actionAbout($id)
     {
-        return $this->render('about');
+        /**
+         * популярные посты
+         */
+        $popularPosts = Article::getPopularPosts();
+
+        /**
+         * последние посты
+         */
+        $recentPosts = Article::getRecentPosts();
+
+        /**
+         * список категорий посты
+         */
+        $categoryList = Category::getAllCategory();
+
+        $singleArticle = Article::findOne($id);
+
+        /**
+         * увеличиваем количество просмотров данной статьи
+         */
+        Article::incrementViewsByArticle($id);
+
+        return $this->render(
+            'single',
+            [
+                'singleArticle' => $singleArticle,
+                'popularPosts' => $popularPosts,
+                'recentPosts'  => $recentPosts,
+                'categoryList' => $categoryList,
+            ]
+        );
     }
 
+    /**
+     * @param $id
+     * @return string
+     * @throws Exception
+     */
     public function actionView($id)
     {
+        /**
+         * увеличиваем количество просмотров данной статьи
+         */
+        Article::incrementViewsByArticle($id);
+
+        /**
+         * популярные посты
+         */
+        $popularPosts = Article::getPopularPosts();
+
+        /**
+         * последние посты
+         */
+        $recentPosts = Article::getRecentPosts();
+
+        /**
+         * список категорий посты
+         */
+        $categoryList = Category::getAllCategory();
+
         $singleArticle = Article::findOne($id);
-        return $this->render('single', ['single_article' => $singleArticle]);
+
+        $articleListByCategory = Article::getListArticlesByCategory($id);
+
+        $mostPopularPost = Article::getMostPopularPostInCategory($singleArticle->category_id);
+
+        return $this->render(
+            'single',
+            [
+                'singleArticle'         => $singleArticle,
+                'popularPosts'          => $popularPosts,
+                'recentPosts'           => $recentPosts,
+                'categoryList'          => $categoryList,
+                'articleListByCategory' => $articleListByCategory,
+                'mostPopularPost'       => $mostPopularPost
+            ]
+        );
     }
 
     public function actionError()
@@ -185,9 +246,35 @@ class SiteController extends Controller
         return $this->render('error');
     }
 
-    public function actionCategory()
+    public function actionCategory($id)
     {
-        return $this->render('category');
+        $data = Article::getAllPagination(2, $id);
+
+        /**
+         * популярные посты
+         */
+        $popularPosts = Article::getPopularPosts();
+
+        /**
+         * последние посты
+         */
+        $recentPosts = Article::getRecentPosts();
+
+        /**
+         * список категорий посты
+         */
+        $categoryList = Category::getAllCategory();
+
+        return $this->render(
+            'category',
+            [
+                'articles'     => $data['articles'],
+                'pagination'   => $data['pagination'],
+                'popularPosts' => $popularPosts,
+                'recentPosts'  => $recentPosts,
+                'categoryList' => $categoryList,
+            ]
+        );
     }
 
 }

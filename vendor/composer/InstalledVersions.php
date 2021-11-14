@@ -27,12 +27,12 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '2.0.43',
-    'version' => '2.0.43.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => 'e5f9b8d792a42ae6ebecbd5780bd0d5b078c038b',
     'name' => 'yiisoft/yii2-app-basic',
   ),
   'versions' => 
@@ -778,6 +778,24 @@ private static $installed = array (
       ),
       'reference' => '34a41e998c2183e22995f158c581e7b5e755ab9e',
     ),
+    'tinify/tinify' => 
+    array (
+      'pretty_version' => '1.5.3',
+      'version' => '1.5.3.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'f971971ca4b4f0185277a81ba695640d47833852',
+    ),
+    'vintage/yii2-tinify' => 
+    array (
+      'pretty_version' => '2.1.0',
+      'version' => '2.1.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'a793219c2a1761debfc69f889d23256d3a591330',
+    ),
     'webmozart/assert' => 
     array (
       'pretty_version' => '1.10.0',
@@ -798,12 +816,12 @@ private static $installed = array (
     ),
     'yiisoft/yii2-app-basic' => 
     array (
-      'pretty_version' => '2.0.43',
-      'version' => '2.0.43.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => 'e5f9b8d792a42ae6ebecbd5780bd0d5b078c038b',
     ),
     'yiisoft/yii2-bootstrap4' => 
     array (
