@@ -810,4 +810,5 @@ class User extends Component
     {
         return $this->accessChecker !== null ? $this->accessChecker : $this->getAuthManager();
     }
+
 }

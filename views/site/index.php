@@ -112,6 +112,28 @@ use yii\widgets\LinkPager;
                             <?php endforeach; ?>
                         </ul>
                     </aside>
+                    <aside class="widget pos-padding">
+                        <h3 class="widget-title text-uppercase text-center">Follow@Instagram</h3>
+
+                        <div class="instragram-follow">
+                            <a href="#">
+                                <img src="/public/images/ins-flow1.png" alt="">
+                            </a>
+                            <a href="#">
+                                <img src="/public/images/ins-flow2.png" alt="">
+                            </a>
+                            <a href="#">
+                                <img src="/public/images/ins-flow3.png" alt="">
+                            </a>
+                            <a href="#">
+                                <img src="/public/images/ins-flow4.png" alt="">
+                            </a>
+                            <a href="#">
+                                <img src="/public/images/ins-flow5.png" alt="">
+                            </a>
+                        </div>
+
+                    </aside>
                 </div>
             </div>
         </div>
